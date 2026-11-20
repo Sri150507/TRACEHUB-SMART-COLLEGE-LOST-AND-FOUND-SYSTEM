@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TraceHub — Campus Lost &amp; Found</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F3EBDD;--paper2:#EADFCB;--ink:#17161A;--mute:#6B665C;--lost:#FF4B1F;--lost-soft:#FFD9CC;--found:#00796B;--found-soft:#C9EBE4;--sun:#FFC93C;--card:#FFFBF3;--line:#17161A22;--r:14px}
+@media (prefers-color-scheme:dark){:root{--paper:#17161A;--paper2:#201F24;--ink:#F3EBDD;--mute:#A39D90;--lost:#FF6A43;--lost-soft:#3A1F17;--found:#2DBBA6;--found-soft:#10312C;--sun:#FFC93C;--card:#222127;--line:#F3EBDD22}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased;
+background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px}
+.mono{font-family:'DM Mono',ui-monospace,monospace;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase}
+a{color:inherit}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(8px);border-bottom:2px solid var(--ink)}
+nav .wrap{display:flex;align-items:center;gap:18px;height:64px}
+.logo{font-weight:800;font-size:1.5rem;letter-spacing:-.04em;text-decoration:none;display:flex;align-items:center;gap:8px}
+.logo i{width:26px;height:26px;border-radius:7px 7px 7px 2px;background:var(--lost);display:inline-block;position:relative;transform:rotate(-8deg)}
+.logo i:after{content:"";position:absolute;left:50%;top:5px;width:7px;height:7px;border-radius:50%;background:var(--paper);transform:translateX(-50%)}
+.links{display:flex;gap:4px;margin-left:auto;align-items:center}
+.links a{padding:8px 13px;border-radius:99px;text-decoration:none;font-weight:600;font-size:.95rem}
+.links a:hover,.links a.on{background:var(--ink);color:var(--paper)}
+.bell{position:relative}
+.dot{position:absolute;top:2px;right:2px;min-width:18px;height:18px;border-radius:9px;background:var(--lost);color:#fff;font-size:.7rem;display:grid;place-items:center;font-weight:700}
+.btn{border:2px solid var(--ink);background:var(--card);color:var(--ink);padding:11px 20px;border-radius:99px;font-weight:700;box-shadow:3px 3px 0 var(--ink);transition:transform .1s,box-shadow .1s;text-decoration:none;display:inline-block}
+.btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.lost{background:var(--lost);color:#fff}.btn.found{background:var(--found);color:#fff}.btn.sun{background:var(--sun);color:#17161A}
+.btn.small{padding:6px 14px;font-size:.9rem;box-shadow:2px 2px 0 var(--ink)}
+.btn[disabled]{opacity:.5;pointer-events:none}
+/* hero */
+.hero{padding:54px 0 28px;display:grid;grid-template-columns:1.15fr .85fr;gap:30px;align-items:center}
+h1{font-size:clamp(2.8rem,7vw,5.6rem);line-height:.92;letter-spacing:-.05em;margin:0 0 18px;font-weight:800}
+h1 em{font-style:normal;background:var(--sun);color:#17161A;padding:0 .12em;border-radius:8px;display:inline-block;transform:rotate(-2deg)}
+.lede{max-width:34ch;font-size:1.2rem;color:var(--mute);margin:0 0 26px}
+.tags{display:flex;gap:26px;justify-content:center;padding-top:34px;position:relative}
+.tagbtn{position:relative;width:190px;min-height:250px;padding:70px 18px 18px;text-decoration:none;color:#fff;border:2px solid var(--ink);
+clip-path:polygon(22% 0,78% 0,100% 14%,100% 100%,0 100%,0 14%);transform-origin:50% -40px;transition:transform .3s cubic-bezier(.3,1.6,.5,1);display:flex;flex-direction:column;justify-content:flex-end}
+.tagbtn.l{background:var(--lost);transform:rotate(-5deg)}.tagbtn.f{background:var(--found);transform:rotate(4deg)}
+.tagbtn:hover{transform:rotate(0) scale(1.04)}
+.tagbtn:before{content:"";position:absolute;top:20px;left:50%;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:var(--paper);border:2px solid var(--ink)}
+.tagbtn b{font-size:1.9rem;line-height:1;letter-spacing:-.03em}.tagbtn span{opacity:.85;font-size:.9rem;margin-top:8px}
+.string{position:absolute;top:-8px;width:2px;height:60px;background:var(--ink)}
+/* stats strip */
+.strip{display:flex;border:2px solid var(--ink);border-radius:var(--r);background:var(--card);overflow:hidden;margin:20px 0 10px}
+.strip div{flex:1;padding:14px 18px;border-right:2px dashed var(--line)}.strip div:last-child{border:0}
+.strip b{display:block;font-size:2rem;line-height:1;letter-spacing:-.04em}
+h2{font-size:2rem;letter-spacing:-.04em;margin:46px 0 14px;display:flex;align-items:baseline;gap:12px}
+h2 small{font-size:.8rem}
+/* item tags */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.item{position:relative;background:var(--card);border:2px solid var(--ink);border-radius:6px 6px var(--r) var(--r);text-decoration:none;display:block;transition:transform .15s;padding-top:0;overflow:hidden;box-shadow:4px 4px 0 var(--ink)}
+.item:hover{transform:translateY(-4px) rotate(-.6deg)}
+.item .head{height:34px;display:flex;align-items:center;justify-content:space-between;padding:0 14px 0 44px;color:#fff;position:relative}
+.item.lost .head{background:var(--lost)}.item.found .head{background:var(--found)}
+.item .head:before{content:"";position:absolute;left:14px;top:9px;width:16px;height:16px;border-radius:50%;background:var(--paper);border:2px solid var(--ink)}
+.thumb{height:150px;background:var(--paper2);display:grid;place-items:center;font-size:3.4rem;border-bottom:2px dashed var(--line);overflow:hidden}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.item .body{padding:12px 14px 14px}
+.item h3{margin:0 0 4px;font-size:1.15rem;line-height:1.2;letter-spacing:-.02em}
+.meta{color:var(--mute);font-size:.85rem;display:flex;gap:10px;flex-wrap:wrap}
+.stamp{position:absolute;right:10px;top:52px;border:3px solid var(--found);color:var(--found);padding:2px 10px;font-weight:800;transform:rotate(12deg);border-radius:6px;background:#fff9;letter-spacing:.1em}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:2px solid var(--ink);border-radius:99px;background:var(--card);font-weight:600;font-size:.92rem;cursor:pointer;user-select:none}
+.chip.on{background:var(--ink);color:var(--paper)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+/* hotspots */
+.hot{display:grid;gap:8px;border:2px solid var(--ink);border-radius:var(--r);background:var(--card);padding:18px}
+.hot div{display:grid;grid-template-columns:120px 1fr 28px;gap:12px;align-items:center;font-size:.9rem}
+.hot .bar{height:14px;background:var(--paper2);border-radius:7px;overflow:hidden;border:1.5px solid var(--ink)}
+.hot .bar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--lost),var(--lost) 6px,var(--sun) 6px,var(--sun) 12px);transition:width .8s}
+/* forms */
+.panel{background:var(--card);border:2px solid var(--ink);border-radius:var(--r);padding:26px;box-shadow:6px 6px 0 var(--ink)}
+label{display:block;font-weight:700;margin:18px 0 8px}
+input,textarea{width:100%;padding:12px 14px;border:2px solid var(--ink);border-radius:10px;background:var(--paper);color:var(--ink);font:inherit}
+textarea{min-height:100px;resize:vertical}
+.hint{color:var(--mute);font-size:.85rem;margin-top:4px}
+.drop{border:2px dashed var(--ink);border-radius:var(--r);padding:26px;text-align:center;cursor:pointer;background:var(--paper)}
+.drop img{max-height:200px;border-radius:10px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.err{background:var(--lost-soft);border:2px solid var(--lost);padding:10px 14px;border-radius:10px;margin-top:14px;font-weight:600}
+.kindtoggle{display:flex;border:2px solid var(--ink);border-radius:99px;overflow:hidden;width:max-content}
+.kindtoggle button{border:0;padding:10px 22px;font-weight:800;background:transparent;color:var(--ink)}
+.kindtoggle .l.on{background:var(--lost);color:#fff}.kindtoggle .f.on{background:var(--found);color:#fff}
+/* detail */
+.detail{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:30px}
+.big{height:340px;border:2px solid var(--ink);border-radius:var(--r);background:var(--paper2);display:grid;place-items:center;font-size:6rem;overflow:hidden}
+.big img{width:100%;height:100%;object-fit:cover}
+.score{display:grid;grid-template-columns:70px 1fr 40px;gap:8px;align-items:center;font-size:.85rem;margin:3px 0}
+.score .bar{height:9px;background:var(--paper2);border-radius:5px;overflow:hidden}.score .bar i{display:block;height:100%;background:var(--found)}
+.ring{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-weight:800;border:3px solid var(--ink);background:conic-gradient(var(--found) calc(var(--p)*1%),var(--paper2) 0)}
+.ring span{background:var(--card);width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:.9rem}
+.match{display:flex;gap:14px;align-items:center;border:2px solid var(--ink);border-radius:12px;padding:12px;background:var(--card);text-decoration:none;margin-bottom:10px}
+.match:hover{background:var(--paper2)}
+.ticket{border:2px solid var(--ink);background:var(--sun);color:#17161A;border-radius:12px;padding:18px;text-align:center;position:relative;margin:14px 0}
+.ticket .code{font-family:'DM Mono',monospace;font-size:2.6rem;letter-spacing:.25em;font-weight:500}
+.otp{display:flex;gap:8px;justify-content:center}.otp input{width:48px;height:58px;text-align:center;font-size:1.6rem;padding:0;font-family:'DM Mono',monospace}
+.note{display:flex;gap:12px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.note i{width:10px;height:10px;border-radius:50%;background:var(--lost);margin-top:8px;flex:none}.note.seen i{background:var(--line)}
+.lb{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line)}
+.lb .n{width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-weight:800;font-size:.85rem}
+.lb .n.g{background:var(--sun)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(120px);background:var(--ink);color:var(--paper);padding:12px 22px;border-radius:99px;font-weight:700;transition:transform .3s;z-index:50;opacity:0;pointer-events:none}
+.toast.show{transform:translateX(-50%);opacity:1}
+.empty{text-align:center;padding:50px 10px;color:var(--mute);border:2px dashed var(--line);border-radius:var(--r)}
+footer{margin:90px auto 30px;color:var(--mute);font-size:.85rem;text-align:center}
+@media(max-width:820px){.hero,.detail,.two{grid-template-columns:1fr}.tags{padding-top:10px}.tagbtn{width:150px;min-height:200px}.links a.hide{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="logo" href="#/"><i></i>TraceHub</a>
+  <div class="links" id="links"></div>
+</div></nav>
+<main class="wrap" id="app"></main>
+<div class="toast" id="toast" role="status"></div>
+<footer class="wrap mono">TraceHub · built for the campus community · be kind, return things</footer>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let ME=null, META=null, TOKEN=localStorage.getItem('th_token')||'';
+const ICON={'Electronics':'📱','Wallet & Cards':'👛','Keys':'🔑','Bags':'🎒','Books & Documents':'📚','Bottles & Lunch':'🧴','Clothing & Accessories':'🧢','Other':'📦'};
+async function api(path,opt={}){
+  const r=await fetch('/api'+path,{method:opt.body?'POST':'GET',headers:{'Content-Type':'application/json',...(TOKEN?{Authorization:'Bearer '+TOKEN}:{})},body:opt.body?JSON.stringify(opt.body):undefined});
+  const j=await r.json().catch(()=>({error:'Network error'}));
+  if(!r.ok){ if(r.status===401&&TOKEN){TOKEN='';ME=null;localStorage.removeItem('th_token');} throw new Error(j.error||'Something went wrong'); }
+  return j;
+}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2800)}
+function ago(ts){const s=Date.now()/1000-ts;if(s<3600)return Math.max(1,Math.floor(s/60))+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago'}
+function fmtDate(d){return new Date(d+'T00:00').toLocaleDateString(undefined,{day:'numeric',month:'short'})}
+function nav(){
+  const h=location.hash.slice(1)||'/';
+  const l=(href,txt,cls='')=>`<a href="#${href}" class="${h===href?'on':''} ${cls}">${txt}</a>`;
+  $('#links').innerHTML=l('/browse','Browse')+l('/report/lost','Report','hide')+(ME?`<a class="bell ${h==='/me'?'on':''}" href="#/me">${esc(ME.name.split(' ')[0])} · ${ME.points}★${ME.unread?`<span class="dot">${ME.unread}</span>`:''}</a>`:`<a class="btn small sun" href="#/login">Log in</a>`);
+}
+function card(i){
+  return `<a class="item ${i.kind}" href="#/item/${i.id}">
+   <div class="head mono"><span>${i.kind==='lost'?'Lost':'Found'}</span><span>#${String(i.id).padStart(4,'0')}</span></div>
+   <div class="thumb">${i.image?`<img loading="lazy" src="${esc(i.image)}" alt="">`:ICON[i.category]||'📦'}</div>
+   ${i.status==='returned'?'<div class="stamp mono">Returned</div>':''}
+   <div class="body"><h3>${esc(i.title)}</h3><div class="meta"><span>📍 ${esc(i.location)}</span><span>${fmtDate(i.event_date)}</span><span>${esc(i.category)}</span></div></div></a>`;
+}
+/* ---------- pages ---------- */
+async function home(){
+  const [s,items,lb,heat]=await Promise.all([api('/stats'),api('/items'),api('/leaderboard'),api('/heat')]);
+  const mx=Math.max(1,...heat.map(h=>h.count));
+  $('#app').innerHTML=`
+  <section class="hero">
+    <div><div class="mono" style="margin-bottom:14px">● Campus lost &amp; found, rebuilt</div>
+    <h1>Lost it?<br>Found it?<br><em>Tag it.</em></h1>
+    <p class="lede">Report in under a minute. TraceHub compares every report and tells you when something looks like a match.</p>
+    <a class="btn sun" href="#/browse">Browse all tags →</a></div>
+    <div class="tags"><a class="tagbtn l" href="#/report/lost"><b>I lost<br>something</b><span>Tell us what it looks like</span></a><a class="tagbtn f" href="#/report/found"><b>I found<br>something</b><span>Help it get home</span></a></div>
+  </section>
+  <div class="strip"><div><b>${s.lost}</b><span class="mono">Looking for owner</span></div><div><b>${s.found}</b><span class="mono">Waiting to be claimed</span></div><div><b>${s.returned}</b><span class="mono">Reunited</span></div><div><b>${s.users}</b><span class="mono">Students on board</span></div></div>
+  <h2>Latest tags <small class="mono">fresh from campus</small></h2>
+  <div class="grid">${items.slice(0,6).map(card).join('')||'<div class="empty">Nothing reported yet.</div>'}</div>
+  <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:26px;margin-top:10px" class="two">
+   <div><h2>Hotspots <small class="mono">where things go missing</small></h2><div class="hot">${heat.sort((a,b)=>b.count-a.count).map(h=>`<div><span>${esc(h.place)}</span><span class="bar"><i style="width:${h.count/mx*100}%"></i></span><b>${h.count}</b></div>`).join('')}</div></div>
+   <div><h2>Good finders <small class="mono">★ points</small></h2><div class="panel" style="padding:10px 20px;box-shadow:4px 4px 0 var(--ink)">${lb.slice(0,5).map((u,k)=>`<div class="lb"><span class="n ${k==0?'g':''}">${k+1}</span><div style="flex:1"><b>${esc(u.name)}</b><div class="meta">${esc(u.dept||'')}</div></div><b>${u.points}★</b></div>`).join('')}</div></div>
+  </div>`;
+}
+let F={kind:'',category:'',q:'',status:'open'};
+async function browse(){
+  $('#app').innerHTML=`<h2 style="margin-top:34px">Browse tags</h2>
+  <div class="panel" style="padding:18px;margin-bottom:24px">
+   <input id="q" placeholder="Search e.g. black wallet, blue phone, keys…" value="${esc(F.q)}" aria-label="Search">
+   <div class="chips" style="margin-top:12px" id="kc">${[['','All'],['lost','Lost'],['found','Found']].map(([v,t])=>`<span class="chip ${F.kind===v?'on':''}" data-k="${v}">${t}</span>`).join('')}<span class="chip ${F.status==='returned'?'on':''}" data-s="1">✔ Returned</span></div>
+   <div class="chips" style="margin-top:10px" id="cc">${META.categories.map(c=>`<span class="chip ${F.category===c?'on':''}" data-c="${esc(c)}">${ICON[c]} ${esc(c)}</span>`).join('')}</div></div>
+  <div class="grid" id="res"></div>`;
+  const run=async()=>{
+    const p=new URLSearchParams({...F}); for(const [k,v] of [...p]) if(!v) p.delete(k);
+    const items=await api('/items?'+p);
+    $('#res').innerHTML=items.map(card).join('')||`<div class="empty" style="grid-column:1/-1">No tags match. <a href="#/report/lost">Report it</a> and we’ll watch for it.</div>`;
+  };
+  $('#q').oninput=e=>{F.q=e.target.value;clearTimeout(browse.t);browse.t=setTimeout(run,250)};
+  $('#kc').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;if(c.dataset.s){F.status=F.status==='returned'?'open':'returned'}else F.kind=c.dataset.k;browse()};
+  $('#cc').onclick=e=>{const c=e.target.closest('.chip');if(!c)return;F.category=F.category===c.dataset.c?'':c.dataset.c;browse()};
+  run();
+}
+let DRAFT={};
+function reportPage(kind){
+  if(!ME){location.hash='#/login?next=/report/'+kind;return}
+  const d=DRAFT=Object.assign({kind,category:'',location:'',image:'',date:new Date().toISOString().slice(0,10)},DRAFT.kind===kind?DRAFT:{});
+  d.kind=kind;
+  const L=kind==='lost';
+  $('#app').innerHTML=`<div style="max-width:720px;margin:34px auto">
+  <div class="kindtoggle" id="kt"><button class="l ${L?'on':''}" data-k="lost">I lost</button><button class="f ${!L?'on':''}" data-k="found">I found</button></div>
+  <h2 style="margin-top:20px">${L?'What did you lose?':'What did you find?'}</h2>
+  <div class="panel">
+   <label for="t" style="margin-top:0">Item name</label><input id="t" maxlength="80" placeholder="${L?'e.g. Black leather wallet':'e.g. Blue water bottle'}" value="${esc(d.title||'')}">
+   <label>Category</label><div class="chips" id="cat">${META.categories.map(c=>`<span class="chip ${d.category===c?'on':''}" data-v="${esc(c)}">${ICON[c]} ${esc(c)}</span>`).join('')}</div>
+   <label for="d">Describe it</label><textarea id="d" placeholder="Colour, brand, marks, what was inside…">${esc(d.description||'')}</textarea><div class="hint">The more detail, the better the match. Don’t include phone numbers.</div>
+   <label>Where ${L?'did you last see it':'did you find it'}?</label><div class="chips" id="loc">${META.places.map(c=>`<span class="chip ${d.location===c?'on':''}" data-v="${esc(c)}">📍 ${esc(c)}</span>`).join('')}</div>
+   <div class="two"><div><label for="dt">Date</label><input type="date" id="dt" max="${new Date().toISOString().slice(0,10)}" value="${d.date}"></div></div>
+   ${L?'':`<label for="sec">Secret detail <span class="mono" style="color:var(--mute)">(hidden, used to verify the owner)</span></label><input id="sec" placeholder="e.g. amount of cash, wallpaper, name inside" value="${esc(d.secret||'')}"><div class="hint">Keep this to yourself. The real owner will have to describe it.</div>`}
+   <label>Photo <span class="mono" style="color:var(--mute)">(optional)</span></label>
+   <div class="drop" id="drop" tabindex="0">${d.image?`<img src="${d.image}" alt="preview">`:'📷 Tap to add a photo'}</div><input type="file" id="file" accept="image/*" hidden>
+   <div id="err"></div>
+   <div style="margin-top:22px;display:flex;gap:12px;align-items:center"><button class="btn ${L?'lost':'found'}" id="go">Post ${L?'lost':'found'} tag</button><span class="hint">You earn ★${META.points[kind]} for reporting</span></div>
+  </div></div>`;
+  const keep=()=>{d.title=$('#t').value;d.description=$('#d').value;d.date=$('#dt').value;if($('#sec'))d.secret=$('#sec').value};
+  $('#kt').onclick=e=>{const b=e.target.closest('button');if(!b)return;keep();location.hash='#/report/'+b.dataset.k};
+  for(const [id,key] of [['cat','category'],['loc','location']]) $('#'+id).onclick=e=>{const c=e.target.closest('.chip');if(!c)return;d[key]=c.dataset.v;[...$('#'+id).children].forEach(x=>x.classList.toggle('on',x===c))};
+  $('#drop').onclick=()=>$('#file').click();
+  $('#drop').onkeydown=e=>{if(e.key==='Enter')$('#file').click()};
+  $('#file').onchange=async e=>{const f=e.target.files[0];if(!f)return;d.image=await shrink(f);$('#drop').innerHTML=`<img src="${d.image}" alt="preview">`};
+  $('#go').onclick=async()=>{
+    keep();$('#err').innerHTML='';$('#go').disabled=true;
+    try{const r=await api('/items',{body:{kind,title:d.title,description:d.description,category:d.category,location:d.location,date:d.date,secret:d.secret,image:d.image}});
+      DRAFT={};await refreshMe();toast(`Tag posted · +${r.points}★`+(r.matches?` · ${r.matches} possible match${r.matches>1?'es':''}`:''));location.hash='#/item/'+r.id}
+    catch(e){$('#err').innerHTML=`<div class="err" role="alert">${esc(e.message)}</div>`;$('#go').disabled=false}
+  };
+}
+function shrink(file){return new Promise(res=>{const img=new Image();img.onload=()=>{const m=900,s=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=img.width*s;c.height=img.height*s;c.getContext('2d').drawImage(img,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.78))};img.src=URL.createObjectURL(file)})}
+async function itemPage(id){
+  const i=await api('/items/'+id);
+  const mine=ME&&ME.id===i.user_id;
+  let side='';
+  if(i.status==='returned') side=`<div class="ticket" style="background:var(--found-soft);color:var(--ink)"><b>✔ This item has been returned.</b></div>`;
+  else if(i.kind==='found'&&!mine) {
+    const mc=i.my_claim;
+    side=`<div class="panel" style="box-shadow:4px 4px 0 var(--ink)"><h3 style="margin:0 0 6px">Is this yours?</h3><p class="hint" style="margin:0 0 6px">Prove it by describing something not shown in the listing${i.has_question?' — '+esc(i.question):''}.</p>
+    ${mc&&mc.status==='rejected'?'<div class="err">Your last answer didn’t match. You can try again.</div>':''}
+    <textarea id="ans" placeholder="e.g. what’s inside, marks, wallpaper…" style="min-height:80px"></textarea><div id="err"></div><div id="claimres"></div>
+    <button class="btn found" id="claim" style="margin-top:12px">Claim this item</button></div>`;
+  } else if(i.kind==='found'&&mine) {
+    side=`<div class="panel" style="box-shadow:4px 4px 0 var(--ink)"><h3 style="margin:0 0 6px">Handover</h3><p class="hint" style="margin:0 0 12px">${(i.claims||[]).filter(c=>c.status==='approved').length?'A verified owner is on the way. Ask them for their 6-digit code, then enter it here.':'When someone passes verification they’ll get a 6-digit code to show you.'}</p>
+    <div class="otp" id="otp">${[0,1,2,3,4,5].map(()=>'<input inputmode="numeric" maxlength="1" aria-label="digit">').join('')}</div><div id="err"></div>
+    <button class="btn found" id="hand" style="margin-top:14px;width:100%">Confirm handover (+★${META.points.return})</button></div>`;
+  } else if(mine) side=`<div class="panel" style="box-shadow:4px 4px 0 var(--ink)"><h3 style="margin:0 0 6px">Your lost report</h3><p class="hint">We’ll notify you when a likely match is posted. Got it back already?</p><button class="btn small" id="close">Mark as found</button></div>`;
+  $('#app').innerHTML=`<a href="#/browse" class="mono" style="display:inline-block;margin-top:26px">← All tags</a>
+  <div class="detail"><div><div class="big">${i.image?`<img src="${esc(i.image)}" alt="${esc(i.title)}">`:ICON[i.category]||'📦'}</div></div>
+  <div><span class="btn small ${i.kind}" style="pointer-events:none">${i.kind==='lost'?'LOST':'FOUND'} · #${String(i.id).padStart(4,'0')}</span>
+   <h1 style="font-size:2.6rem;margin:14px 0 8px">${esc(i.title)}</h1>
+   <div class="meta" style="font-size:1rem;margin-bottom:12px"><span>📍 ${esc(i.location)}</span><span>🗓 ${fmtDate(i.event_date)}</span><span>${ICON[i.category]} ${esc(i.category)}</span><span>by ${esc(i.owner)}</span></div>
+   <p>${esc(i.description)}</p>${side}</div></div>
+  ${i.matches.length?`<h2>Likely matches <small class="mono">ranked by AI score</small></h2><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px">${i.matches.map(m=>`<a class="match" href="#/item/${m.id}"><div class="ring" style="--p:${Math.round(m.score*100)}"><span>${Math.round(m.score*100)}%</span></div><div style="flex:1"><b>${esc(m.title)}</b><div class="meta">${m.kind} · ${esc(m.location)}</div>${[['Text',m.text],['Place',m.place],['Time',m.time]].map(([n,v])=>`<div class="score"><span>${n}</span><span class="bar"><i style="width:${v*100}%"></i></span><span>${Math.round(v*100)}</span></div>`).join('')}</div></a>`).join('')}</div>`:''}`;
+  if($('#claim')) $('#claim').onclick=async()=>{
+    if(!ME){location.hash='#/login?next=/item/'+id;return}
+    $('#err').innerHTML='';
+    try{const r=await api(`/items/${id}/claim`,{body:{answer:$('#ans').value}});
+      if(r.approved){$('#claimres').innerHTML=`<div class="ticket"><div class="mono">Verified · show this code to the finder</div><div class="code">${r.otp}</div><div class="mono">valid 15 min · single use</div></div>`;$('#claim').remove();$('#ans').disabled=true}
+      else $('#err').innerHTML=`<div class="err">Not quite — that doesn’t match what the finder saw (score ${Math.round(r.score*100)}%). Add more specific details.</div>`}
+    catch(e){if(!TOKEN){location.hash='#/login?next=/item/'+id}else $('#err').innerHTML=`<div class="err">${esc(e.message)}</div>`}
+  };
+  if($('#otp')){const ins=[...$('#otp').children];ins.forEach((x,k)=>{x.oninput=()=>{x.value=x.value.replace(/\D/g,'');if(x.value&&ins[k+1])ins[k+1].focus()};x.onkeydown=e=>{if(e.key==='Backspace'&&!x.value&&ins[k-1])ins[k-1].focus()};x.onpaste=e=>{const t=(e.clipboardData.getData('text')||'').replace(/\D/g,'').slice(0,6);if(t){e.preventDefault();ins.forEach((y,j)=>y.value=t[j]||'')}}});
+    $('#hand').onclick=async()=>{try{const r=await api(`/items/${id}/handover`,{body:{code:ins.map(x=>x.value).join('')}});await refreshMe();toast('Handover confirmed · +'+r.points+'★');itemPage(id)}catch(e){$('#err').innerHTML=`<div class="err">${esc(e.message)}</div>`}}}
+  if($('#close')) $('#close').onclick=async()=>{await api(`/items/${id}/close`,{body:{}});toast('Marked as found 🎉');itemPage(id)};
+}
+async function mePage(){
+  if(!ME){location.hash='#/login';return}
+  const [mine,notes]=await Promise.all([api('/items?mine=1&status=open'),api('/notes')]);
+  const lvl=ME.points<50?['Newcomer',50]:ME.points<150?['Helper',150]:['Campus Hero',null];
+  $('#app').innerHTML=`<h2 style="margin-top:34px">Hi ${esc(ME.name.split(' ')[0])} 👋</h2>
+  <div class="two" style="grid-template-columns:1fr 1.4fr;align-items:start">
+   <div class="panel"><div class="mono">${esc(lvl[0])}</div><div style="font-size:3.4rem;font-weight:800;letter-spacing:-.05em;line-height:1">${ME.points}★</div>
+   ${lvl[1]?`<div style="height:12px;border:2px solid var(--ink);border-radius:6px;margin:12px 0 6px;overflow:hidden"><i style="display:block;height:100%;width:${Math.min(100,ME.points/lvl[1]*100)}%;background:var(--sun)"></i></div><div class="hint">${lvl[1]-ME.points} points to next level</div>`:''}
+   <p class="hint">Lost report +${META.points.lost} · Found report +${META.points.found} · Verified return +${META.points.return}</p>
+   <button class="btn small" id="out">Log out</button></div>
+   <div class="panel"><b>Notifications</b>${notes.length?notes.map(n=>`<a class="note ${n.seen?'seen':''}" style="text-decoration:none" href="#/item/${n.item_id||''}"><i></i><div>${esc(n.text)}<div class="meta">${ago(n.created)}</div></div></a>`).join(''):'<div class="hint" style="margin-top:8px">Nothing yet. Matches will show up here.</div>'}</div></div>
+  <h2>Your open tags</h2><div class="grid">${mine.map(card).join('')||'<div class="empty" style="grid-column:1/-1">You haven’t reported anything. <a href="#/report/lost">Start now</a></div>'}</div>`;
+  $('#out').onclick=()=>{TOKEN='';ME=null;localStorage.removeItem('th_token');location.hash='#/';nav();toast('Logged out')};
+  if(ME.unread){await api('/notes/seen',{body:{}});ME.unread=0;nav()}
+}
+function loginPage(){
+  const next=(location.hash.split('next=')[1])||'/me'; let reg=false;
+  const draw=()=>{ $('#app').innerHTML=`<div style="max-width:440px;margin:50px auto"><div class="panel"><h2 style="margin:0 0 4px">${reg?'Join TraceHub':'Welcome back'}</h2><p class="hint" style="margin-top:0">${reg?'Create an account to post and claim items.':'Log in to post and claim items.'}</p>
+   <form id="f">${reg?'<label for="n">Name</label><input id="n" required autocomplete="name"><label for="dp">Department</label><input id="dp" placeholder="e.g. AI & DS">':''}
+   <label for="e">College email</label><input id="e" type="email" required autocomplete="email"><label for="p">Password</label><input id="p" type="password" required minlength="6" autocomplete="${reg?'new-password':'current-password'}">
+   <div id="err"></div><button class="btn sun" style="margin-top:20px;width:100%">${reg?'Create account':'Log in'}</button></form>
+   <p style="text-align:center;margin-bottom:0"><a href="#" id="sw">${reg?'Have an account? Log in':'New here? Create account'}</a></p>
+   ${reg?'':'<p class="hint" style="text-align:center">Demo: aarav@tracehub.edu / demo123</p>'}</div></div>`;
+   $('#sw').onclick=e=>{e.preventDefault();reg=!reg;draw()};
+   $('#f').onsubmit=async e=>{e.preventDefault();try{const body={email:$('#e').value,password:$('#p').value};if(reg){body.name=$('#n').value;body.dept=$('#dp').value}
+     const r=await api(reg?'/register':'/login',{body});TOKEN=r.token;ME=r.user;localStorage.setItem('th_token',TOKEN);toast('Welcome, '+ME.name.split(' ')[0]);location.hash='#'+decodeURIComponent(next)}catch(x){$('#err').innerHTML=`<div class="err" role="alert">${esc(x.message)}</div>`}}};
+  draw();
+}
+async function refreshMe(){ if(!TOKEN){ME=null;return} try{ME=await api('/me')}catch{ME=null} nav() }
+async function route(){
+  nav(); window.scrollTo(0,0);
+  const h=location.hash.slice(1).split('?')[0]||'/';
+  try{
+    if(h==='/')await home();
+    else if(h==='/browse')await browse();
+    else if(h.startsWith('/report/'))reportPage(h.split('/')[2]==='found'?'found':'lost');
+    else if(h.startsWith('/item/'))await itemPage(h.split('/')[2]);
+    else if(h==='/me')await mePage();
+    else if(h==='/login')loginPage();
+    else await home();
+  }catch(e){$('#app').innerHTML=`<div class="empty" style="margin-top:40px">${esc(e.message)}</div>`}
+}
+(async()=>{META=await api('/meta');await refreshMe();window.addEventListener('hashchange',route);route()})();
+</script>
+</body>
+</html>
